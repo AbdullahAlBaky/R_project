@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Khulna next-day rainfall prediction using a trained Random Forest machine learning model.">
+  <title>Khulna Rainfall AI | Weather Prediction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="#"><span class="brand-mark">☁</span><span>Khulna<span class="brand-light">Rainfall AI</span></span></a>
+    <nav><a href="#dataset">Dataset</a><a href="#approach">ML Approach</a><a href="#predict">Prediction</a><a href="#performance">Results</a></nav>
+    <span class="status"><i></i> ML MODEL ACTIVE</span>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span></span> MACHINE LEARNING WEATHER INSIGHT</div>
+        <h1>Know the rain<br> <em>before tomorrow.</em></h1>
+        <p class="hero-text">Explore next-day rainfall predictions for Khulna, Bangladesh, powered by historical weather data and a trained Random Forest model.</p>
+        <a class="primary-link" href="#predict">Make a prediction <span>↗</span></a>
+        <div class="hero-foot"><span>14,609</span> daily records <b>·</b> <span>1984–2023</span> dataset period <b>·</b> <span>4</span> models evaluated</div>
+      </div>
+      <div class="hero-visual">
+        <div class="weather-orb"><div class="sun"></div><div class="cloud cloud-a"></div><div class="cloud cloud-b"></div><div class="rain rain-a"></div><div class="rain rain-b"></div><div class="rain rain-c"></div></div>
+        <div class="floating-card fc-top"><span class="mini-icon">◌</span><div><small>SELECTED MODEL</small><strong>Random Forest</strong></div></div>
+        <div class="floating-card fc-bottom"><small>TEST ACCURACY</small><strong>85.42<span>%</span></strong><div class="mini-track"><i></i></div></div>
+      </div>
+    </section>
+
+
+    <section class="project-section" id="dataset">
+      <div class="section-heading"><div><div class="eyebrow">01 / UNDERSTANDING THE DATA</div><h2>From weather records to a prediction task</h2><p>What the dataset contains, how it was prepared, and what the model learns from it.</p></div><span class="model-chip">Khulna · Bangladesh</span></div>
+      <div class="dataset-stats">
+        <div class="panel data-stat"><small>ORIGINAL RECORDS</small><strong>14,610</strong><span>Daily observations</span></div>
+        <div class="panel data-stat"><small>DATA PERIOD</small><strong>1984–2023</strong><span>40 years of records</span></div>
+        <div class="panel data-stat"><small>FINAL RECORDS</small><strong>14,609</strong><span>After next-day target creation</span></div>
+        <div class="panel data-stat"><small>MODEL FEATURES</small><strong>06</strong><span>Weather and calendar inputs</span></div>
+      </div>
+      <div class="dataset-layout">
+        <div class="panel content-panel"><div class="content-eyebrow">DATASET DESCRIPTION</div><h3>Daily weather observations</h3><p>The project uses historical daily weather records for Khulna. The original file contained 14,610 rows and 9 columns, covering 1984 to 2023. Weather variables include rainfall, sunshine, humidity and temperature, along with station and calendar information.</p><div class="tag-list"><span>Rainfall</span><span>Sunshine</span><span>Humidity</span><span>Temperature</span><span>Month</span><span>Day of year</span></div><p class="source-note"><strong>Dataset source:</strong> The project notebook describes the data as historical Khulna weather records attributed to the Bangladesh Meteorological Department and distributed through Mendeley Data. Add the exact dataset URL to the report if required.</p></div>
+        <div class="panel content-panel"><div class="content-eyebrow">PREDICTION TARGET</div><h3>Will it rain tomorrow?</h3><p>The target was created by shifting the rainfall column by one day. The following day's rainfall was converted into a binary class:</p><div class="target-classes"><div><b>0</b><span>No Rain</span><strong>10,073 records</strong><small>68.95%</small></div><div><b>1</b><span>Rain</span><strong>4,536 records</strong><small>31.05%</small></div></div><p class="source-note">A value greater than zero means Rain (1); zero rainfall means No Rain (0). The final row is removed because it has no following-day rainfall value.</p></div>
+      </div>
+      <div class="panel process-panel"><div class="content-eyebrow">DATA PREPARATION & JUSTIFICATION</div><h3>How the data was prepared</h3><div class="process-grid">
+        <div><span>01</span><b>Cleaned columns</b><p>Removed the unnecessary Unnamed index column. The dataset had no missing values or duplicate rows.</p></div>
+        <div><span>02</span><b>Created date</b><p>Combined Year, Month and Day into a date field, then sorted observations chronologically.</p></div>
+        <div><span>03</span><b>Created target</b><p>Shifted rainfall to represent the following day and converted it into Rain / No Rain classes.</p></div>
+        <div><span>04</span><b>Selected features</b><p>Used Rainfall, Sunshine, Humidity, Temperature, Month and DayOfYear. Station was constant and Year was not used as a direct input.</p></div>
+        <div><span>05</span><b>Split by time</b><p>Used the first 80% for training (11,687 rows) and the final 20% for testing (2,922 rows).</p></div>
+        <div><span>06</span><b>Prevented time leakage</b><p>Kept the split chronological rather than random, so the test period comes after the training period.</p></div>
+      </div></div>
+      <div class="panel eda-panel"><div class="content-eyebrow">EXPLORATORY DATA ANALYSIS</div><h3>Patterns found in the weather data</h3><div class="eda-grid">
+        <div><span class="eda-mark">01</span><b>Seasonal rainfall</b><p>Average rainfall was highest around July, while November, December and January were comparatively dry.</p></div>
+        <div><span class="eda-mark">02</span><b>Humidity matters</b><p>Humidity had a positive relationship with the next-day rainfall target in the correlation analysis.</p></div>
+        <div><span class="eda-mark">03</span><b>Sunshine pattern</b><p>Sunshine showed a negative relationship with rainfall; rainy conditions were generally associated with less sunshine.</p></div>
+        <div><span class="eda-mark">04</span><b>Unequal classes</b><p>No Rain represented 68.95% of records and Rain represented 31.05%, so class-aware metrics were included.</p></div>
+      </div></div>
+    </section>
+    <section class="project-section model-approach" id="approach">
+      <div class="section-heading"><div><div class="eyebrow">02 / MODEL DESIGN</div><h2>Why these machine learning models?</h2><p>Four classification algorithms were trained and evaluated on the same chronological split.</p></div></div>
+      <div class="algorithm-grid">
+        <div class="panel algorithm-card"><span class="algo-number">01</span><h3>Logistic Regression</h3><p>A classification baseline. Feature scaling was applied, and balanced class weights were used to account for the unequal class distribution.</p><small>Median imputation · StandardScaler · balanced weights</small></div>
+        <div class="panel algorithm-card"><span class="algo-number">02</span><h3>Decision Tree</h3><p>A tree-based model that learns rule-like splits between weather conditions. It can capture non-linear patterns and is relatively easy to interpret.</p><small>Median imputation · balanced weights</small></div>
+        <div class="panel algorithm-card selected-algorithm"><span class="algo-number">03</span><h3>Random Forest <span>SELECTED</span></h3><p>An ensemble of decision trees. It was selected because it achieved the strongest accuracy, precision, ROC-AUC and Average Precision in this evaluation.</p><small>200 trees · balanced weights · random_state 42</small></div>
+        <div class="panel algorithm-card"><span class="algo-number">04</span><h3>K-Nearest Neighbors</h3><p>A distance-based classifier. Standardization was applied because KNN uses distances and features on larger scales could otherwise dominate.</p><small>Median imputation · StandardScaler · 5 neighbors</small></div>
+      </div>
+      <div class="panel workflow-panel"><div class="content-eyebrow">IMPLEMENTATION WORKFLOW</div><div class="workflow-line">
+        <div><i>1</i><b>Prepare</b><small>Clean and create target</small></div><span>→</span><div><i>2</i><b>Split</b><small>Chronological 80:20</small></div><span>→</span><div><i>3</i><b>Train</b><small>Fit four classifiers</small></div><span>→</span><div><i>4</i><b>Evaluate</b><small>Metrics and curves</small></div><span>→</span><div><i>5</i><b>Deploy</b><small>Save Random Forest</small></div>
+      </div></div>
+    </section>
+
+    <section class="section-grid" id="predict">
+      <div class="section-heading">
+        <div><div class="eyebrow">03 / PREDICTION TOOL</div><h2>Tomorrow's outlook</h2><p>Enter the weather observations for a date in Khulna.</p></div>
+        <span class="model-chip">✦ Random Forest · 200 trees</span>
+      </div>
+      <div class="prediction-layout">
+        <form class="panel form-panel" method="POST" action="/">
+          <div class="panel-title"><span class="panel-icon">⌁</span><div><h3>Weather conditions</h3><p>All fields are required</p></div></div>
+          {% if error %}<div class="alert error">{{ error }}</div>{% endif %}
+          <label class="field full"><span>Observation date</span><input type="date" name="date" id="date" value="{{ form_values.date }}" required><small>Month and day of year are calculated automatically.</small></label>
+          <div class="form-fields">
+            <label class="field"><span>Rainfall <small>mm</small></span><input type="number" name="rainfall" min="0" max="1000" step="any" placeholder="e.g. 12.5" value="{{ form_values.rainfall }}" required></label>
+            <label class="field"><span>Sunshine <small>hours</small></span><input type="number" name="sunshine" min="0" max="24" step="any" placeholder="e.g. 6.5" value="{{ form_values.sunshine }}" required></label>
+            <label class="field"><span>Humidity <small>%</small></span><input type="number" name="humidity" min="0" max="100" step="any" placeholder="e.g. 78" value="{{ form_values.humidity }}" required></label>
+            <label class="field"><span>Temperature <small>°C</small></span><input type="number" name="temperature" min="-10" max="60" step="any" placeholder="e.g. 29.5" value="{{ form_values.temperature }}" required></label>
+          </div>
+          <button class="submit-btn" type="submit">Predict tomorrow's rainfall <span>→</span></button>
+          <p class="form-note">For learning and demonstration only. This is not an official weather warning.</p>
+        </form>
+
+        <div class="panel result-panel">
+          {% if prediction %}
+            <div class="result-kicker">PREDICTION GENERATED</div>
+            <div class="result-symbol {{ 'rainy' if prediction.is_rain else 'clear' }}">{{ '☂' if prediction.is_rain else '☀' }}</div>
+            <h3 class="{{ 'rain-text' if prediction.is_rain else 'clear-text' }}">{{ prediction.label }}</h3>
+            <p class="result-date">For {{ prediction.tomorrow_date }} <span>·</span> based on {{ prediction.input_date }}</p>
+            <div class="probability-wrap">
+              <div class="probability-head"><span>Rain probability</span><strong>{{ prediction.rain_probability }}%</strong></div>
+              <div class="probability-track"><i style="width: {{ prediction.rain_probability }}%"></i></div>
+              <div class="probability-foot"><span>No rain {{ prediction.no_rain_probability }}%</span><span>Rain {{ prediction.rain_probability }}%</span></div>
+            </div>
+            <div class="result-disclaimer">The percentages are model-estimated class probabilities, not a guarantee of actual weather.</div>
+          {% else %}
+            <div class="empty-state">
+              <div class="empty-icon">◉</div>
+              <span class="result-kicker">YOUR RESULT WILL APPEAR HERE</span>
+              <h3>Ready when you are.</h3>
+              <p>Fill in the weather conditions and run the model to see its next-day rainfall prediction.</p>
+              <div class="empty-steps"><span>01</span> Add weather values <b>→</b> <span>02</span> Run prediction <b>→</b> <span>03</span> View result</div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+
+    <section class="metrics-strip">
+      <div><small>BEST TEST ACCURACY</small><strong>85.42%</strong><span>Random Forest</span></div>
+      <div><small>BEST ROC-AUC</small><strong>0.9158</strong><span>Random Forest</span></div>
+      <div><small>BEST RECALL</small><strong>76.23%</strong><span>Logistic Regression</span></div>
+      <div><small>FEATURES USED</small><strong>06</strong><span>Weather & calendar</span></div>
+    </section>
+
+    <section class="performance-section" id="performance">
+      <div class="section-heading">
+        <div><div class="eyebrow">04 / MODEL EVALUATION</div><h2>Performance at a glance</h2><p>Four classifiers evaluated on the same chronological test set.</p></div>
+        <span class="model-chip">80:20 chronological split</span>
+      </div>
+      <div class="panel table-panel">
+        <div class="table-scroll"><table>
+          <thead><tr><th>MODEL</th><th>ACCURACY</th><th>PRECISION</th><th>RECALL</th><th>F1-SCORE</th><th>ROC-AUC</th></tr></thead>
+          <tbody>
+          {% for r in results %}
+            <tr class="{{ 'highlight-row' if r.name == 'Random Forest' else '' }}">
+              <td><span class="model-name">{{ r.name }}</span>{% if r.name == 'Random Forest' %}<span class="best-tag">SELECTED</span>{% endif %}</td>
+              <td>{{ "%.2f"|format(r.accuracy) }}%</td><td>{{ "%.2f"|format(r.precision) }}%</td><td>{{ "%.2f"|format(r.recall) }}%</td><td>{{ "%.2f"|format(r.f1) }}%</td><td>{{ "%.4f"|format(r.auc) }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table></div>
+        <div class="table-foot">Average Precision (AP): Logistic Regression 0.7983 · Decision Tree 0.5398 · Random Forest 0.8358 · KNN 0.7340</div>
+      </div>
+
+      <div class="charts-grid">
+        <div class="panel chart-panel">
+          <div class="chart-title"><div><h3>Accuracy comparison</h3><p>Percentage on the test dataset</p></div><span class="chart-badge">%</span></div>
+          {% for r in results %}
+          <div class="bar-row"><div><span>{{ r.name }}</span><b>{{ "%.2f"|format(r.accuracy) }}%</b></div><div class="bar-bg"><i class="{{ 'bar-selected' if r.name == 'Random Forest' else '' }}" style="width: {{ r.accuracy }}%"></i></div></div>
+          {% endfor %}
+        </div>
+        <div class="panel chart-panel">
+          <div class="chart-title"><div><h3>Random Forest feature importance</h3><p>Model's built-in feature importance</p></div><span class="chart-badge">RF</span></div>
+          {% for f in rf_importance %}
+          <div class="bar-row"><div><span>{{ f.name }}</span><b>{{ "%.4f"|format(f.value) }}</b></div><div class="bar-bg"><i style="width: {{ (f.value / 0.27 * 100)|round(1) }}%"></i></div></div>
+          {% endfor %}
+        </div>
+      </div>
+      <p class="interpretation"><strong>What the results tell us:</strong> Random Forest achieved the highest accuracy, precision, ROC-AUC and Average Precision. Logistic Regression achieved the highest recall and F1-score. The preferred model can depend on whether overall classification or identifying more rainy days is the main priority.</p>
+    </section>
+
+    <section class="about-section" id="about">
+      <div class="about-copy"><div class="eyebrow">05 / ABOUT THE PROJECT</div><h2>Turning historical weather into useful insight.</h2><p>This academic project uses historical daily weather records from Khulna to classify whether rainfall will occur on the following day. The final Random Forest pipeline uses six input features and was selected after comparing four classification algorithms.</p></div>
+      <div class="about-cards"><div><strong>1984–2023</strong><span>Historical data period</span></div><div><strong>14,609</strong><span>Prepared daily records</span></div><div><strong>06</strong><span>Input features</span></div><div><strong>04</strong><span>Models compared</span></div></div>
+    </section>
+    <footer><a class="brand" href="#"><span class="brand-mark">☁</span><span>Khulna<span class="brand-light">Rainfall AI</span></span></a><span>Academic Machine Learning Project · Khulna, Bangladesh</span><span class="footer-note">Predictions are estimates, not official forecasts.</span></footer>
+  </main>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

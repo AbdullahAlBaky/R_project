@@ -1,0 +1,13 @@
+Khulna_Rainfall_Prediction/
+|-- app.py
+|-- requirements.txt
+|-- README.md
+|-- PROJECT_STRUCTURE.txt
+|-- models/
+|   |-- rainfall_prediction_model.pkl
+|   `-- rainfall_features.pkl
+|-- templates/
+|   `-- index.html
+`-- static/
+    |-- css/style.css
+    `-- js/app.js
